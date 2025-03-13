@@ -31,3 +31,10 @@ This project curates and displays a collection of the funniest and most viral so
 **Hosting & Deployment:**
 - Frontend: Vercel/Netlify
 - Backend: Render/Heroku
+
+
+
+
+
+deployed link
+https://backend-deploying-api-0scu.onrender.com/ping
