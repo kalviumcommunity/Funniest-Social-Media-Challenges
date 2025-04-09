@@ -33,3 +33,6 @@ jjnbedfjnadhj c
 **Hosting & Deployment:**
 - Frontend: Vercel/Netlify
 - Backend: Render/Heroku
+
+deployed link https://backend-deploying-api-0scu.onrender.com/ping
+deployed link https://funniest-social-media-challengess.pages.dev/
