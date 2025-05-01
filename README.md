@@ -32,4 +32,4 @@ jjnbedfjnadhj c
 
 **Hosting & Deployment:**
 - Frontend: Vercel/Netlify
-- Backend: Render/Heroku
+- Backend: Render/.

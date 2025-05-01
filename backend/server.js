@@ -3,9 +3,11 @@ const mongoose = require('mongoose');
 const app = express();
 require('dotenv').config(); // Load environment variables from .env file
 const router = require('./router'); // Ensure this points to the correct router file
+const cors = require('cors');
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
+app.use(cors()); // Enable CORS for all routes
 
 // Route to test server connection
 app.get('/ping', (req, res) => {
@@ -17,6 +19,7 @@ app.get('/', (req, res) => {
     try {
         res.status(201).send({ msg: "Connected to MongoDB" });
     } catch (err) {
+        
         res.status(500).send({ msg: "Something went wrong", err });
     }
 });
