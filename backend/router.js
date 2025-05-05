@@ -40,9 +40,9 @@ router.get('/get', async (req, res) => {
 router.put('/update/:id', async (req, res) => {
     try {
         const {id} = req.params.id;
-        const updates = req.body; // Updates sent in the request body
+        const updates = req.body; 
 
-        // Update the document
+        
         const updatedChallenge = await model.findOneAndUpdate({ id }, updates, { new: true });
 
         if (!updatedChallenge) {
