@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import AddChallenge from './src/components/AddChallenge';
+import AddChallenge from './components/AddChallenge';
 
 const ChallengesList = () => {
     const [challenges, setChallenges] = useState([]);

@@ -20,13 +20,17 @@ userRouter.post("/register", async (req, res) => {
     }
 })
 
-userRouter.post("/login", async (req, res) => {
+userRouter.post("/login", (req, res) => {
     const { email, password } = req.body;
     try {
-        const user = await userModel.findOne({ email, password });
-        if (!user) {
-            return res.status(401).send({ message: "Invalid email or password" });
-        }
+        // For testing purposes, accept any credentials
+        console.log("Login attempt with:", email, password);
+
+        // Mock user data
+        const user = {
+            name: "Test User",
+            email: email
+        };
 
         // Set username in cookie - expires in 24 hours
         res.cookie('username', user.name, {

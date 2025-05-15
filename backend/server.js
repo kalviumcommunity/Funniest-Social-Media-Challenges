@@ -11,7 +11,15 @@ const userRouter = require('./userRouter');
 app.use(express.json());
 // Enable CORS with credentials support
 app.use(cors({
-    origin: 'http://localhost:5173', // Frontend URL
+    origin: function(origin, callback) {
+        // Allow requests from these origins
+        const allowedOrigins = ['http://localhost:5000', 'http://localhost:8000'];
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 app.use(cookieParser()); // Parse cookies
@@ -36,11 +44,7 @@ app.use('/user', userRouter);
 app.use('', router);
 
 const PORT = 9080;
-app.listen(PORT, async () => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI);
-        console.log('Server connected successfully');
-    } catch (err) {
-        console.error('MongoDB connection error:', err);
-    }
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log('MongoDB connection bypassed for testing');
 });

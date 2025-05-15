@@ -19,10 +19,11 @@ const Login = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
-        
+
         try {
             const response = await axios.post('http://localhost:9080/user/login', user, {
                 timeout: 5000,
+                withCredentials: true, // Important for cookies to be set
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -41,23 +42,23 @@ const Login = () => {
             console.error('Login error:', error);
         }
     };
-    
+
     return (
         <div>
             <h2>Login</h2>
             <form onSubmit={handleRegister}>
                 <div>
-                    <input 
-                        type="email" 
-                        name='email' 
+                    <input
+                        type="email"
+                        name='email'
                         placeholder="Email"
                         onChange={handleInput}
                     />
                 </div>
                 <div>
-                    <input 
-                        type="password" 
-                        name='password' 
+                    <input
+                        type="password"
+                        name='password'
                         placeholder="Password"
                         onChange={handleInput}
                     />

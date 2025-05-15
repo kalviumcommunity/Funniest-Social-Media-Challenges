@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Testing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .panel {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .info {
+            background-color: #d9edf7;
+            color: #31708f;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>CORS Testing Tool</h1>
+    
+    <div class="container">
+        <div class="panel">
+            <h2>API Request</h2>
+            <div>
+                <label for="apiUrl">API URL:</label>
+                <input type="text" id="apiUrl" value="http://localhost:9080/user/login" style="width: 80%;">
+            </div>
+            <div>
+                <label for="requestMethod">Method:</label>
+                <select id="requestMethod">
+                    <option value="GET">GET</option>
+                    <option value="POST" selected>POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+            <div>
+                <label for="requestBody">Request Body (JSON):</label>
+                <textarea id="requestBody" rows="5" style="width: 100%;">{"email": "test@example.com", "password": "password123"}</textarea>
+            </div>
+            <div>
+                <label>
+                    <input type="checkbox" id="withCredentials" checked>
+                    Include Credentials (for cookies)
+                </label>
+            </div>
+            <button id="sendRequest">Send Request</button>
+            <div id="requestStatus" class="status"></div>
+        </div>
+        
+        <div class="panel">
+            <h2>Response</h2>
+            <div>
+                <strong>Status:</strong> <span id="responseStatus"></span>
+            </div>
+            <div>
+                <strong>Headers:</strong>
+                <pre id="responseHeaders"></pre>
+            </div>
+            <div>
+                <strong>Body:</strong>
+                <pre id="responseBody"></pre>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>CORS Information</h2>
+            <div class="status info">
+                <p>Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell browsers to give a web application running at one origin, access to selected resources from a different origin.</p>
+            </div>
+            <h3>Common CORS Headers</h3>
+            <table>
+                <tr>
+                    <th>Header</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Access-Control-Allow-Origin</td>
+                    <td>Indicates whether the response can be shared with requesting code from the given origin</td>
+                </tr>
+                <tr>
+                    <td>Access-Control-Allow-Credentials</td>
+                    <td>Indicates whether the response to the request can be exposed when the credentials flag is true</td>
+                </tr>
+                <tr>
+                    <td>Access-Control-Allow-Headers</td>
+                    <td>Used in response to a preflight request to indicate which HTTP headers can be used during the actual request</td>
+                </tr>
+                <tr>
+                    <td>Access-Control-Allow-Methods</td>
+                    <td>Specifies the method or methods allowed when accessing the resource</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('sendRequest').addEventListener('click', async function() {
+            const url = document.getElementById('apiUrl').value;
+            const method = document.getElementById('requestMethod').value;
+            const bodyText = document.getElementById('requestBody').value;
+            const withCredentials = document.getElementById('withCredentials').checked;
+            
+            let requestBody;
+            try {
+                requestBody = bodyText ? JSON.parse(bodyText) : null;
+            } catch (e) {
+                document.getElementById('requestStatus').textContent = `Invalid JSON: ${e.message}`;
+                document.getElementById('requestStatus').className = 'status error';
+                return;
+            }
+            
+            document.getElementById('requestStatus').textContent = 'Sending request...';
+            document.getElementById('requestStatus').className = 'status info';
+            
+            try {
+                const fetchOptions = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: withCredentials ? 'include' : 'omit'
+                };
+                
+                if (['POST', 'PUT'].includes(method) && requestBody) {
+                    fetchOptions.body = JSON.stringify(requestBody);
+                }
+                
+                const response = await fetch(url, fetchOptions);
+                
+                // Display response status
+                document.getElementById('responseStatus').textContent = `${response.status} ${response.statusText}`;
+                
+                // Display response headers
+                const headers = {};
+                response.headers.forEach((value, name) => {
+                    headers[name] = value;
+                });
+                document.getElementById('responseHeaders').textContent = JSON.stringify(headers, null, 2);
+                
+                // Display response body
+                try {
+                    const data = await response.json();
+                    document.getElementById('responseBody').textContent = JSON.stringify(data, null, 2);
+                } catch (e) {
+                    const text = await response.text();
+                    document.getElementById('responseBody').textContent = text || '(empty response)';
+                }
+                
+                // Update request status
+                if (response.ok) {
+                    document.getElementById('requestStatus').textContent = 'Request successful';
+                    document.getElementById('requestStatus').className = 'status success';
+                } else {
+                    document.getElementById('requestStatus').textContent = `Request failed: ${response.status} ${response.statusText}`;
+                    document.getElementById('requestStatus').className = 'status error';
+                }
+                
+                // Check for CORS headers
+                const corsHeaders = [
+                    'access-control-allow-origin',
+                    'access-control-allow-credentials',
+                    'access-control-allow-headers',
+                    'access-control-allow-methods'
+                ];
+                
+                let corsInfo = 'CORS Headers:\n';
+                let hasCorsHeaders = false;
+                
+                corsHeaders.forEach(header => {
+                    if (headers[header]) {
+                        corsInfo += `${header}: ${headers[header]}\n`;
+                        hasCorsHeaders = true;
+                    }
+                });
+                
+                if (hasCorsHeaders) {
+                    corsInfo += '\nCORS is properly configured!';
+                    document.getElementById('requestStatus').textContent += '\n' + corsInfo;
+                }
+                
+            } catch (error) {
+                document.getElementById('responseStatus').textContent = 'Error';
+                document.getElementById('responseHeaders').textContent = '';
+                document.getElementById('responseBody').textContent = '';
+                document.getElementById('requestStatus').textContent = `Error: ${error.message}`;
+                document.getElementById('requestStatus').className = 'status error';
+                
+                if (error.message.includes('CORS')) {
+                    document.getElementById('requestStatus').textContent += '\n\nThis appears to be a CORS error. The server may not be configured to allow requests from this origin.';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

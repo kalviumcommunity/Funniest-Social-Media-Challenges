@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Testing Tools</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #444;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        .card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .card a {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .card a:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Testing Tools</h1>
+
+    <div class="container">
+        <div class="card">
+            <h2>Authentication Testing</h2>
+            <p>Test user registration, login, and logout functionality with cookie handling.</p>
+            <a href="test-auth.html" target="_blank">Open Auth Tester</a>
+        </div>
+
+        <div class="card">
+            <h2>Simple Login/Logout Test</h2>
+            <p>A minimal test for login and logout with cookie handling.</p>
+            <a href="login-logout-test.html" target="_blank">Open Simple Tester</a>
+        </div>
+
+        <div class="card">
+            <h2>Cookie Testing</h2>
+            <p>Test cookie creation, reading, and deletion in the browser.</p>
+            <a href="cookie-test.html" target="_blank">Open Cookie Tester</a>
+        </div>
+
+        <div class="card">
+            <h2>CORS Testing</h2>
+            <p>Test Cross-Origin Resource Sharing (CORS) configuration for your API.</p>
+            <a href="cors-test.html" target="_blank">Open CORS Tester</a>
+        </div>
+
+        <div class="card">
+            <h2>API Test Script</h2>
+            <p>Run automated tests for the authentication API endpoints.</p>
+            <a href="javascript:void(0)" onclick="runApiTests()">Run API Tests</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>These tools are designed to help test and debug the authentication API endpoints.</p>
+    </div>
+
+    <script>
+        function runApiTests() {
+            alert('To run the API tests, open a terminal and run: node api-test.js');
+        }
+    </script>
+</body>
+</html>
