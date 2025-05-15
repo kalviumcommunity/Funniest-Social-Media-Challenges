@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Logout Cookie Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .panel {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        input, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .info {
+            background-color: #d9edf7;
+            color: #31708f;
+        }
+        .cookie-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .cookie-list li {
+            padding: 8px;
+            margin-bottom: 5px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .cookie-list li:nth-child(odd) {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Login/Logout Cookie Test</h1>
+    
+    <div class="container">
+        <!-- Login Panel -->
+        <div class="panel">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" value="test@example.com" required>
+                <input type="password" id="loginPassword" placeholder="Password" value="password123" required>
+                <button type="submit">Login</button>
+            </form>
+            <div id="loginStatus" class="status"></div>
+        </div>
+        
+        <!-- Logout Panel -->
+        <div class="panel">
+            <h2>Logout</h2>
+            <button id="logoutBtn">Logout</button>
+            <div id="logoutStatus" class="status"></div>
+        </div>
+    </div>
+    
+    <div class="panel">
+        <h2>Current Cookies</h2>
+        <div id="cookieDisplay">Loading cookies...</div>
+        <button id="refreshCookies">Refresh Cookies</button>
+    </div>
+    
+    <div class="panel">
+        <h2>API Response</h2>
+        <pre id="responseData">No response yet</pre>
+    </div>
+    
+    <script>
+        // Base URL for API
+        const API_URL = 'http://localhost:9080/user';
+        
+        // Function to display all cookies
+        function displayCookies() {
+            const cookieDisplay = document.getElementById('cookieDisplay');
+            const cookies = document.cookie.split(';');
+            
+            if (cookies.length === 1 && cookies[0] === '') {
+                cookieDisplay.innerHTML = '<p>No cookies found</p>';
+                return;
+            }
+            
+            let html = '<ul class="cookie-list">';
+            cookies.forEach(cookie => {
+                const [name, value] = cookie.trim().split('=');
+                html += `<li><strong>${name}:</strong> ${value}</li>`;
+            });
+            html += '</ul>';
+            
+            cookieDisplay.innerHTML = html;
+        }
+        
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const loginStatus = document.getElementById('loginStatus');
+            loginStatus.textContent = 'Logging in...';
+            loginStatus.className = 'status info';
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include', // Important for cookies
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok) {
+                    loginStatus.textContent = 'Login successful!';
+                    loginStatus.className = 'status success';
+                } else {
+                    loginStatus.textContent = `Error: ${data.message || 'Login failed'}`;
+                    loginStatus.className = 'status error';
+                }
+                
+                // Refresh cookies display
+                displayCookies();
+                
+            } catch (error) {
+                loginStatus.textContent = `Error: ${error.message}`;
+                loginStatus.className = 'status error';
+                document.getElementById('responseData').textContent = error.toString();
+            }
+        });
+        
+        // Logout button click
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            const logoutStatus = document.getElementById('logoutStatus');
+            logoutStatus.textContent = 'Logging out...';
+            logoutStatus.className = 'status info';
+            
+            try {
+                const response = await fetch(`${API_URL}/logout`, {
+                    method: 'POST',
+                    credentials: 'include' // Important for cookies
+                });
+                
+                const data = await response.json();
+                document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok) {
+                    logoutStatus.textContent = 'Logout successful!';
+                    logoutStatus.className = 'status success';
+                } else {
+                    logoutStatus.textContent = `Error: ${data.message || 'Logout failed'}`;
+                    logoutStatus.className = 'status error';
+                }
+                
+                // Refresh cookies display
+                displayCookies();
+                
+            } catch (error) {
+                logoutStatus.textContent = `Error: ${error.message}`;
+                logoutStatus.className = 'status error';
+                document.getElementById('responseData').textContent = error.toString();
+            }
+        });
+        
+        // Refresh cookies button
+        document.getElementById('refreshCookies').addEventListener('click', displayCookies);
+        
+        // Display cookies on page load
+        displayCookies();
+    </script>
+</body>
+</html>
