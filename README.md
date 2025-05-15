@@ -30,6 +30,3 @@ This project curates and displays a collection of the funniest and most viral so
 - Firebase/Auth0
 jjnbedfjnadhj c 
 
-**Hosting & Deployment:**
-- Frontend: Vercel/Netlify
-- Backend: Render/.
